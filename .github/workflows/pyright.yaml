@@ -9,6 +9,4 @@ jobs:
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
-      - run: uv python install
-      - run: uv sync --dev
       - run: uv run pyright
