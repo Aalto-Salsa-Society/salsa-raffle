@@ -17,6 +17,15 @@ from salsaraffle.settings import (
 logger = logging.getLogger(__name__)
 
 
+def get_attendance_sheets() -> dict[str, pl.DataFrame]:
+    """Return attendance sheets dictionary."""
+    return pl.read_excel(
+        OLD_ATTENDANCE_FILE,
+        sheet_id=0,
+        schema_overrides=dict.fromkeys(ATTENDANCE_WEEKS, pl.String),
+    )
+
+
 def get_high_priority() -> pl.Series:
     """Return a list of people who were left out last cycle."""
     if not OLD_GROUPS_FILE.exists():
@@ -27,7 +36,7 @@ def get_high_priority() -> pl.Series:
         logger.warning("No attendance file found")
         return pl.Series(dtype=pl.Utf8)
 
-    all_sheets = pl.read_excel(OLD_ATTENDANCE_FILE, sheet_id=0)
+    all_sheets = get_attendance_sheets()
 
     # Find maximum number of participants
     max_per_group = {group: MAX_PER_GROUP for group, _, _ in GROUP_INFO}
@@ -77,7 +86,7 @@ def get_low_priority() -> pl.Series:
         logger.warning("No attendance file found")
         return pl.Series(dtype=pl.Utf8)
 
-    all_sheets = pl.read_excel(OLD_ATTENDANCE_FILE, sheet_id=0)
+    all_sheets = get_attendance_sheets()
     no_show = pl.col(ATTENDANCE_WEEKS.values()).eq_missing("No show")
     gave_notice = pl.col(ATTENDANCE_WEEKS.values()).eq_missing("Gave notice")
     return (
