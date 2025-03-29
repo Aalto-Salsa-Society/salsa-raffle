@@ -14,15 +14,17 @@ from salsaraffle.settings import (
     OLD_GROUPS_FILE,
 )
 
+logger = logging.getLogger(__name__)
+
 
 def get_high_priority() -> pl.Series:
     """Return a list of people who were left out last cycle."""
     if not OLD_GROUPS_FILE.exists():
-        logging.warning("No groups file found in input")
+        logger.warning("No groups file found in input")
         return pl.Series(dtype=pl.Utf8)
 
     if not OLD_ATTENDANCE_FILE.exists():
-        logging.warning("No attendance file found")
+        logger.warning("No attendance file found")
         return pl.Series(dtype=pl.Utf8)
 
     all_sheets = pl.read_excel(OLD_ATTENDANCE_FILE, sheet_id=0)
@@ -72,7 +74,7 @@ def get_low_priority() -> pl.Series:
     Members with a "No show" or 2 "Gave notice" are considered a disruption.
     """
     if not OLD_ATTENDANCE_FILE.exists():
-        logging.warning("No attendance file found")
+        logger.warning("No attendance file found")
         return pl.Series(dtype=pl.Utf8)
 
     all_sheets = pl.read_excel(OLD_ATTENDANCE_FILE, sheet_id=0)
