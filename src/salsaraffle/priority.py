@@ -8,7 +8,6 @@ import polars as pl
 from salsaraffle.column import Col
 from salsaraffle.results import ATTENDANCE_WEEKS
 from salsaraffle.settings import (
-    GROUP_INFO,
     MAX_PER_GROUP,
     OLD_ATTENDANCE_FILE,
     OLD_GROUPS_FILE,
