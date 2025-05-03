@@ -8,7 +8,6 @@ import polars as pl
 from salsaraffle.column import Col
 from salsaraffle.results import ATTENDANCE_WEEKS
 from salsaraffle.settings import (
-    GROUP_INFO,
     MAX_PER_GROUP,
     OLD_ATTENDANCE_FILE,
     OLD_GROUPS_FILE,
@@ -39,10 +38,13 @@ def get_high_priority() -> pl.Series:
     all_sheets = get_attendance_sheets()
 
     # Find maximum number of participants
-    max_per_group = {group: MAX_PER_GROUP for group, _, _ in GROUP_INFO}
+    max_per_group = {}
     for name, sheet in all_sheets.items():
         group = name.rsplit(maxsplit=1)[0]
-        max_per_group[group] = min(len(sheet), max_per_group[group])
+        max_per_group[group] = min(
+            len(sheet),
+            max_per_group.get(group, MAX_PER_GROUP),
+        )
 
     # Find people who did not get to go to class
     missed_out = []
